@@ -22,37 +22,49 @@ Builder.load_string('''
         height: '48dp'
 
         Label:
-                text: 'Default'
+                id: name_label
+                text: root.name
         Label:
-                text: '{} Units'.format(s1.value)
-        CarefulSlider:
+                text: '{} {}'.format(s1.value, root.units)
+        Slider:
                 id: s1
-
-
-<CarefulSlider@Slider>:
-        min: 0
-        max: 2000
-        value: 150
-        step: 5
-        on_touch_up: self.parent.update_param(self.value) if self.collide_point(*args[1].pos) else None
-
+                min: root.minval 
+                max: root.maxval
+                step: root.step
+                # Needs checking of if touch down happened on it and then act on the up.
+                on_touch_down: root.touchdown(True) if self.collide_point(*args[1].pos) else root.touchdown(None)
+                on_touch_up: root.update_param(self.value) if root.down else None  
 ''')
 
 
 class LabeledSlider(BoxLayout):
+    def __init__(self,name,units,minval,maxval,step, **kwargs):
+        self.name = name
+        self.units = units
+        self.minval = minval
+        self.maxval = maxval
+        self.step = step
+        super(LabeledSlider, self).__init__(**kwargs)
+
+    def touchdown(self,state):
+        self.down = state
+
     def update_param(self,val):
-        print("Slider at {}".format(val)) 
+        print("{} slider at {}".format(self.name,val))
+        # Reset touch down flag
+        self.down = None
     
 class TestAsyncApp(App):
     def build(self):
         layout = BoxLayout(orientation='vertical')
         layout.add_widget(Button(text='Hello There'))
         
-        layout.add_widget(LabeledSlider())
-        
+        fslider = LabeledSlider('Frequency',units='Hz',minval=0,maxval=2000,step=1)
+        zslider = LabeledSlider('Source Depth',units='m',minval=0,maxval=500,step=1)
+        layout.add_widget(fslider)
+        layout.add_widget(zslider)
+
         return layout
-    #CenteredAsyncImage(
-    #            source='http://kivy.org/funny-pictures-cat-is-expecting-you.jpg')
 
 if __name__ == '__main__':
     TestAsyncApp().run()
