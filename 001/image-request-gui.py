@@ -9,25 +9,50 @@ image on screen without doing upscale like the original AsyncImage.
 
 from kivy.app import App
 from kivy.uix.image import AsyncImage
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.slider import Slider
 from kivy.lang import Builder
-
+from kivy.uix.label import Label
+from kivy.uix.button import Button
 
 Builder.load_string('''
-<CenteredAsyncImage>:
-    size: self.texture_size
-    size_hint: None, None
-    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+<LabeledSlider>:
+        orientation: 'horizontal'
+        size_hint_y: None
+        height: '48dp'
+
+        Label:
+                text: 'Default'
+        Label:
+                text: '{} Units'.format(s1.value)
+        CarefulSlider:
+                id: s1
+
+
+<CarefulSlider@Slider>:
+        min: 0
+        max: 2000
+        value: 150
+        step: 5
+        on_touch_up: self.parent.update_param(self.value) if self.collide_point(*args[1].pos) else None
+
 ''')
 
 
-class CenteredAsyncImage(AsyncImage):
-    pass
-
-
+class LabeledSlider(BoxLayout):
+    def update_param(self,val):
+        print("Slider at {}".format(val)) 
+    
 class TestAsyncApp(App):
     def build(self):
-        return CenteredAsyncImage(
-                source='http://kivy.org/funny-pictures-cat-is-expecting-you.jpg')
+        layout = BoxLayout(orientation='vertical')
+        layout.add_widget(Button(text='Hello There'))
+        
+        layout.add_widget(LabeledSlider())
+        
+        return layout
+    #CenteredAsyncImage(
+    #            source='http://kivy.org/funny-pictures-cat-is-expecting-you.jpg')
 
 if __name__ == '__main__':
     TestAsyncApp().run()
