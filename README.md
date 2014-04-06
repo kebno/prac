@@ -15,3 +15,4 @@ to the individual README's for specific details.
 ## Contents
 
 * [000 argparse & async](000/README.md)
+* [001 interactive plotting](001/README.md)
