@@ -16,3 +16,4 @@ to the individual README's for specific details.
 
 * [000 argparse & async](000/README.md)
 * [001 interactive plotting](001/README.md)
+* [002 basic static site with flask](002/README.md)
