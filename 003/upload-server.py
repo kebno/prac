@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, url_for
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = '~/upload-folder'
+UPLOAD_FOLDER = '/tmp'
 ALLOWED_EXTENSIONS = set(['txt', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
@@ -25,17 +25,14 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
-    print 'called'
     if request.method == 'POST':
         file = request.files['file']
         if file and allowed_file(file.filename):
-            print 'hello'
             filename = secure_filename(file.filename)
-            print filename
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return upload_page + '''
                                     <hr>
-                                    <h3>Upload successful</h3>
+                                    <h3>Upload Successful</h3>
                                     <hr>'''
 
     return upload_page
