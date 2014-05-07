@@ -3,6 +3,7 @@ from flask import Flask, request, url_for
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = '/tmp'
+SILENT = True
 ALLOWED_EXTENSIONS = set(['txt', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
@@ -30,7 +31,10 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return upload_page + '''
+            if SILENT:
+                return 'Success'
+            else:
+                return upload_page + '''
                                     <hr>
                                     <h3>Upload Successful</h3>
                                     <hr>'''
@@ -38,4 +42,4 @@ def upload_file():
     return upload_page
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')
