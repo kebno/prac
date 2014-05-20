@@ -43,11 +43,11 @@ function computesimpledbss(f,zs; v=5, rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 	k = 2*pi*f/c              # harmonic wavenumber
 	lambda = c/f              # wavelength
 
-	Nst = 100                 # Number of VTR beams
-	st = linspace(-1, 1, Nst) # angular range for VTR
+	Nst = 50                 # Number of VTR beams
+	st = linspace(0, 1, Nst) # angular range for VTR
 
 	# VLA
-	N = 30                    # number elements
+	N = 15                    # number elements
 	design_f = 333.33         # array design frequency
 	d = 2.25                  # array element spacing
 	arrayZ = 4990 .- [1:N].'*d   # array depths (m)
@@ -118,9 +118,9 @@ function computesimpledbss(f,zs; v=5, rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 end
 
 type PlotData
-  data
-  xaxis
-  yaxis
+  data::Array
+  xaxis::Array
+  yaxis::Array
   datascale::String
 end
 
@@ -156,5 +156,10 @@ function depthtransform_idft(M,k,z,track_st)
 		P(ii) = 1/(2*pi*N)*sum(M .* exp(1i*2*k*z * track_st(ii)))
 	end
 end
+
+using Winston
+
+vtr,trace,dbss = @time(computesimpledbss(150,50;tcpa=30,sim_dur=60))
+plot(dbss.xaxis,10*log10(abs(dbss.data)))
 
 end
