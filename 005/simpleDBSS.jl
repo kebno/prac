@@ -14,10 +14,9 @@ function simpleDBSS(f,zs,v=5; rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 #                    target signal in frequency, but computed depth
 #                    transform at original source frequency) 
 #
-#    OUTPUT  VTR     object that contains computed VTR and necessary
-#                    axis vectors and scale flag (linear or log)
-#            TRACE   target trace signal and needed axis vectors
-#            DBSS    object containing depth transform result and any
+#    OUTPUT  VTR     VTR PlotData object
+#            TRACE   target trace signal PlotData object
+#            DBSS    depth transform result PlotData object
 #
 # Computes the pressure field of a submerged point source in an isovelocity ocean
 # by image theory. A delay-and-sum beamformer is applied to
@@ -35,9 +34,8 @@ function simpleDBSS(f,zs,v=5; rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 
 	# Sim. Parameters
 	SL = 110                  # source level
-	tmin = 0                  # minutes
 	Lsnap = 4                 # Snapshot length (seconds)
-	t = [tmin : Lsnap/60 : tmax]*60 # time vector (seconds)
+	t = [0 : Lsnap/60 : sim_dur]*60 # time vector (seconds)
 
 	c = 1500                  # sound speed (m/s)
 	k = 2*pi*f/c              # harmonic wavenumber
@@ -50,54 +48,63 @@ function simpleDBSS(f,zs,v=5; rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 	N = 30                    # number elements
 	design_f = 333.33         # array design frequency
 	d = 2.25                  # array element spacing
-	arrayZ = 4990 - [1:N]*d   # array depths (m)
+	arrayZ = 4990 .- [1:N].'*d   # array depths (m)
 	zBar = mean(arrayZ)       # mean array depth
 
 	## Target track
-	surf_range = sqrt(rcpa^2 + ((t-tcpa*60) * v).^2) # surface range to source from VLA
-	target_track = zBar./sqrt(zBar^2+surf_range.^2) # sin(theta) to surface location of target
+	surf_range = sqrt(rcpa^2 .+ ((t.-tcpa*60) * v).^2) # surface range to source from VLA
+	target_track = zBar./sqrt(zBar^2.+surf_range.^2) # sin(theta) to surface location of target
 	dtarget_track = diff(target_track) 
-	dtarget_track = [dtarget_track(1) dtarget_track]
+	dtarget_track = [dtarget_track[1], dtarget_track].'
 
 	# relative velocity between array and source
-	v_rel = v^2 * (t-tcpa*60) ./ sqrt(surfRange.^2 + zBar^2)
-	[v_rel,~] = meshgrid(v_rel, arrayZ)
-
+	v_rel = v^2 * (t.-tcpa*60) ./ sqrt(surf_range.^2 .+ zBar^2)
+	
 	## Doppler calculation
 	if doppler
-		f_dop = (1 + v_rel/c) .* f
+		f_dop = (1 .+ v_rel/c) .* f
 	else
 		f_dop = f
 	end
 
 	## Pressure Field
 	slantrange(r,z) = sqrt(r.^2 + z.^2)
-
-	Rimage = slantrange(surf_range,depth+zs)     # image source
-	Rsource = slantrange(surf_range,depth-zs)    # real source 
+	Rimage = broadcast(slantrange,surf_range,arrayZ.+zs)     # image source
+	Rsource = broadcast(slantrange,surf_range,arrayZ.-zs)    # real source 
 
 	x = (10^(SL/20)                             # field at phones
-		* (exp(1i*2*pi*(f_dop/c).*Rsource) ./ Rsource ...
-		- exp(1i*2*pi*(f_dop/c).*Rimage) ./ Rimage))
+		* (exp(im*2*pi*(f_dop/c).*Rsource) ./ Rsource
+		- exp(im*2*pi*(f_dop/c).*Rimage) ./ Rimage))
 
 	# Beamformer function
-	beamweights(sintheta) = exp(-im*k * -([1:N] - N/2).' * d * sintheta) / sqrt(N)
+	# note: unlike matlab, [1:N] creates a column vector
+	beamweights(sintheta) = exp(-im * k*-([1:N] .- N/2) * d .* sintheta.') ./ sqrt(N)
 
 	# VTR Beamformer
 	w = beamweights(st)
-	beam = w.' * x
+	println(size(w))
+	println(size(x))
+	vtr_data = w.' * x.'
+	
+	# Create VTR PlotData object
+	vtr = PlotData(vtr_data,t,st,"linear")
 
 	## Target beamformer
-	# NOTE: 'w' is now "phones X target_track vals over time"
+	# NOTE: 'w' matrix is now "phones X target_track vals over time"
 	#   Each set of array weights is for the different sintheta value
 	#   at each snapshot. Thus we sum along the first dimension (columns)
 	# P is the exact trace signal
 	w = beamweights(target_track)
-	P = w .* x
+			println(size(w))
+	println(size(x))
+	P = w .* x.'  
 	P = abs(sum(P,1)).^2
-
+	
+	# Create TRACE PlotData object
+	trace = PlotData(P,target_track,t,"linear")
+	
 	# Analytic beamformer output expression
-	P_an = N*2*(10^(SL/20))^2/zBar^2*target_track.^2 .* (1-cos(2*k*zs*target_track))
+	P_an = N*2*(10^(SL/20))^2/zBar^2*target_track.^2 .* (1.-cos(2*k*zs*target_track))
 
 	## Depth Transform and Inverse Depth transform
 	zmin = -200
@@ -105,6 +112,16 @@ function simpleDBSS(f,zs,v=5; rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 	z = linspace(zmin,zmax,length(target_track))
 	M = depthtransform_dft(P.*abs(dtarget_track),k,z,target_track)
 
+	# Create DBSS object
+	dbss = PlotData(M,z,z,"linear")
+    return (vtr,trace,dbss)
+end
+
+type PlotData
+  data
+  xaxis
+  yaxis
+  datascale::String
 end
 
 function depthtransform_dft(P,k,z,track_st)
@@ -140,66 +157,66 @@ function depthtransform_idft(M,k,z,track_st)
 	end
 end
 
-function plotsimresults
-# Depth Transform
-	figure
-	plot(z,10*log10(abs(M))- max(10*log10(abs(M))))
-	ymax = max(10*log10(abs(M)))
-	ylim([-20 2])
-	xlim([min(z) max(z)])
-	title(desc)
+#function plotsimresults
+## Depth Transform
+	#figure
+	#plot(z,10*log10(abs(M))- max(10*log10(abs(M))))
+	#ymax = max(10*log10(abs(M)))
+	#ylim([-20 2])
+	#xlim([min(z) max(z)])
+	#title(desc)
 
-	hold on
-	plot(repmat(zs, [1 2]), ylim, 'k--',repmat(-zs, [1 2]), ylim, 'k--')
-	hold off
-	boldify
+	#hold on
+	#plot(repmat(zs, [1 2]), ylim, 'k--',repmat(-zs, [1 2]), ylim, 'k--')
+	#hold off
+	#boldify
 
-	# Inverse Transform
-	P_fit = depthtransform_idft(M,k,z,target_track)
-	ymax = max(P_fit)
+	## Inverse Transform
+	#P_fit = depthtransform_idft(M,k,z,target_track)
+	#ymax = max(P_fit)
 
-	figure
-	plot(target_track,P.*abs(dtarget_track),target_track,real(P_fit))
-	ylim([0 ymax])
-	title('Trace signal and Inverse Depth Transform Output')
-	legend('signal','inverse dbss')
+	#figure
+	#plot(target_track,P.*abs(dtarget_track),target_track,real(P_fit))
+	#ylim([0 ymax])
+	#title('Trace signal and Inverse Depth Transform Output')
+	#legend('signal','inverse dbss')
 
-	## Plot VTR and trace signal vs time and vertical angle
-	numrow = 3
-	numcol = 3
-	sbplts = 1:numrow*numcol
-	sbplts = reshape(sbplts,numrow,numcol).'
+	### Plot VTR and trace signal vs time and vertical angle
+	#numrow = 3
+	#numcol = 3
+	#sbplts = 1:numrow*numcol
+	#sbplts = reshape(sbplts,numrow,numcol).'
 
-	figure('position', [100 50 600 800])
+	#figure('position', [100 50 600 800])
 
-	# Plot VTR
-	subplot(numrow,numcol,sbplts(1,:),'replace')
-	imagesc(t/60, st, 20*log10(abs(beam)))
+	## Plot VTR
+	#subplot(numrow,numcol,sbplts(1,:),'replace')
+	#imagesc(t/60, st, 20*log10(abs(beam)))
 
-	cmax = max(max(20*log10(abs(beam))))
-	caxis([(cmax-40) cmax]) colormap bone axis xy
+	#cmax = max(max(20*log10(abs(beam))))
+	#caxis([(cmax-40) cmax]) colormap bone axis xy
 
-	title('VTR') ylabel('sin\theta')
-	set(gca,'xticklabel',[])
+	#title('VTR') ylabel('sin\theta')
+	#set(gca,'xticklabel',[])
 
-	hold on
-	plot(t/60, target_track) legend('Target Track')
-	hold off
+	#hold on
+	#plot(t/60, target_track) legend('Target Track')
+	#hold off
 
-	# Plot Target Trace Signal vs time
-	subplot(numrow,numcol,sbplts(2,:),'replace')
-	plot(t/60, 10*log10(abs(P)),t/60, 10*log10(abs(P_an))) axis tight
-	title('Trace Signal vs. Time')
-	legend('Computed','Analytic')
+	## Plot Target Trace Signal vs time
+	#subplot(numrow,numcol,sbplts(2,:),'replace')
+	#plot(t/60, 10*log10(abs(P)),t/60, 10*log10(abs(P_an))) axis tight
+	#title('Trace Signal vs. Time')
+	#legend('Computed','Analytic')
 
-	ymax = max(10*log10(abs(P_an)))
-	ylim([ymax-20 ymax])
+	#ymax = max(10*log10(abs(P_an)))
+	#ylim([ymax-20 ymax])
 
-	# Plot Target Trace Signal vs sin\theta
-	subplot(numrow,numcol,sbplts(3,:),'replace')
-	plot(target_track, 10*log10(abs(P))) axis tight
-	title('Trace Signal vs. sin\theta')
-	xlabel('sin\theta')
+	## Plot Target Trace Signal vs sin\theta
+	#subplot(numrow,numcol,sbplts(3,:),'replace')
+	#plot(target_track, 10*log10(abs(P))) axis tight
+	#title('Trace Signal vs. sin\theta')
+	#xlabel('sin\theta')
 
-	ylim([ymax-20 ymax])
-end
+	#ylim([ymax-20 ymax])
+#end
