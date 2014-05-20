@@ -1,4 +1,6 @@
-function simpleDBSS(f,zs,v=5; rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
+module simpleDBSS
+
+function computesimpledbss(f,zs; v=5, rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 # simpleDBSS
 # 2014, John Boyle - NEAR-Lab, Portland State University
 # May 2014, John Boyle (Julia Implementation) 
@@ -82,8 +84,7 @@ function simpleDBSS(f,zs,v=5; rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 
 	# VTR Beamformer
 	w = beamweights(st)
-	println(size(w))
-	println(size(x))
+
 	vtr_data = w.' * x.'
 	
 	# Create VTR PlotData object
@@ -95,8 +96,6 @@ function simpleDBSS(f,zs,v=5; rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 	#   at each snapshot. Thus we sum along the first dimension (columns)
 	# P is the exact trace signal
 	w = beamweights(target_track)
-			println(size(w))
-	println(size(x))
 	P = w .* x.'  
 	P = abs(sum(P,1)).^2
 	
@@ -110,11 +109,12 @@ function simpleDBSS(f,zs,v=5; rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 	zmin = -200
 	zmax = 200
 	z = linspace(zmin,zmax,length(target_track))
-	M = depthtransform_dft(P.*abs(dtarget_track),k,z,target_track)
+        M = depthtransform_dft(P.*abs(dtarget_track),k,z.',target_track.')
 
 	# Create DBSS object
 	dbss = PlotData(M,z,z,"linear")
-    return (vtr,trace,dbss)
+
+    return vtr,trace,dbss
 end
 
 type PlotData
@@ -133,9 +133,9 @@ function depthtransform_dft(P,k,z,track_st)
 #   z:        depth vector for evaluation
 #
 # Apr 2014, John Boyle - NEAR-Lab Portland State University
-	M = 0
-	for ii = 1:length(z)
-		M(ii) = sum(P .* exp(-1i*2*k*z(ii) * track_st))
+        M = fill(0.0+im*0.0,size(track_st))
+        for ii = 1:length(z)
+                M[ii] = sum(P .* exp(-im*2*k*z[ii] .* track_st))
 	end
 	return M
 end
@@ -157,66 +157,4 @@ function depthtransform_idft(M,k,z,track_st)
 	end
 end
 
-#function plotsimresults
-## Depth Transform
-	#figure
-	#plot(z,10*log10(abs(M))- max(10*log10(abs(M))))
-	#ymax = max(10*log10(abs(M)))
-	#ylim([-20 2])
-	#xlim([min(z) max(z)])
-	#title(desc)
-
-	#hold on
-	#plot(repmat(zs, [1 2]), ylim, 'k--',repmat(-zs, [1 2]), ylim, 'k--')
-	#hold off
-	#boldify
-
-	## Inverse Transform
-	#P_fit = depthtransform_idft(M,k,z,target_track)
-	#ymax = max(P_fit)
-
-	#figure
-	#plot(target_track,P.*abs(dtarget_track),target_track,real(P_fit))
-	#ylim([0 ymax])
-	#title('Trace signal and Inverse Depth Transform Output')
-	#legend('signal','inverse dbss')
-
-	### Plot VTR and trace signal vs time and vertical angle
-	#numrow = 3
-	#numcol = 3
-	#sbplts = 1:numrow*numcol
-	#sbplts = reshape(sbplts,numrow,numcol).'
-
-	#figure('position', [100 50 600 800])
-
-	## Plot VTR
-	#subplot(numrow,numcol,sbplts(1,:),'replace')
-	#imagesc(t/60, st, 20*log10(abs(beam)))
-
-	#cmax = max(max(20*log10(abs(beam))))
-	#caxis([(cmax-40) cmax]) colormap bone axis xy
-
-	#title('VTR') ylabel('sin\theta')
-	#set(gca,'xticklabel',[])
-
-	#hold on
-	#plot(t/60, target_track) legend('Target Track')
-	#hold off
-
-	## Plot Target Trace Signal vs time
-	#subplot(numrow,numcol,sbplts(2,:),'replace')
-	#plot(t/60, 10*log10(abs(P)),t/60, 10*log10(abs(P_an))) axis tight
-	#title('Trace Signal vs. Time')
-	#legend('Computed','Analytic')
-
-	#ymax = max(10*log10(abs(P_an)))
-	#ylim([ymax-20 ymax])
-
-	## Plot Target Trace Signal vs sin\theta
-	#subplot(numrow,numcol,sbplts(3,:),'replace')
-	#plot(target_track, 10*log10(abs(P))) axis tight
-	#title('Trace Signal vs. sin\theta')
-	#xlabel('sin\theta')
-
-	#ylim([ymax-20 ymax])
-#end
+end
