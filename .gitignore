@@ -1,12 +1,15 @@
+*.swp
+
 002/static/bootstrap/
 002/static/bootstrap*.zip
 
+006/phaser
+006/hellophaser
+006/phaser-examples
+
+# Python things
 *.py[cod]
-
-# C extensions
 *.so
-
-# Packages
 *.egg
 *.egg-info
 dist
@@ -25,4 +28,3 @@ __pycache__
 # Installer logs
 pip-log.txt
 
-*.swp

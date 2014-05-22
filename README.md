@@ -20,3 +20,4 @@ to the individual README's for specific details.
 * [003 simple upload server with flask](003/README.md)
 * [004 learning Make](004/README.md)
 * [005 port simulation to Julia](005/README.md)
+* [006 Phaser game framework Hello World](006/README.md)
