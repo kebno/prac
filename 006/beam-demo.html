@@ -48,13 +48,13 @@ function create() {
 
 function update() {
 
-	arrow.rotation = game.physics.arcade.angleBetween(arrow, array_center);
+	arrow.rotation = game.physics.arcade.angleBetween(array_center, arrow);
 	theta = game.physics.arcade.angleToPointer(array_center);
 	distance = 250;
 	adjacentX = Math.cos(theta) * distance;
 	adjacentY = Math.sin(theta) * distance;
-	arrow.x = adjacentX;
-	arrow.y = adjacentY;
+	arrow.x = adjacentX + 300;
+	arrow.y = adjacentY + 300;
    }
 
 </script>
