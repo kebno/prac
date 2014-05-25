@@ -1,0 +1,63 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>Beam Demo, by John Boyle</title>
+	<script type="text/javascript" src="phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+function preload() {
+
+	game.load.image('phone', 'assets/phone.png');
+	game.load.image('arrow', 'assets/grey_arrow.png');
+	game.stage.setBackgroundColor('#0fffff');
+
+}
+
+var array_center;
+var arrow;
+var arrow2; 
+var lookarrow;
+var signalbox;
+
+function create() {
+	
+	//  Several phones
+	for (var i = 0; i < 6; i++)
+	{
+		var phone = game.add.sprite(300, 240 + i*30, 'phone');
+	}
+	
+	array_center = new Phaser.Circle(300, 300, 0);
+	//arrow2 = game.add.sprite(300, 240, 'arrow');
+
+	arrow = game.add.sprite(100, 300, 'arrow');
+	arrow.anchor.setTo(0, 0);
+	arrow.input.enableDrag(true);
+}
+
+function update() {
+
+	arrow.rotation = game.physics.arcade.angleBetween(arrow, array_center);
+	theta = game.physics.arcade.angleToPointer(array_center);
+	distance = 250;
+	adjacentX = Math.cos(theta) * distance;
+	adjacentY = Math.sin(theta) * distance;
+	arrow.x = adjacentX;
+	arrow.y = adjacentY;
+   }
+
+</script>
+
+</body>
+</html>
