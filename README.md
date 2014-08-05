@@ -21,3 +21,4 @@ to the individual README's for specific details.
 * [004 learning Make](004/README.md)
 * [005 port simulation to Julia](005/README.md)
 * [006 Phaser game framework Hello World](006/README.md)
+* [007 Digital Audio Modulation](007/README.md)
