@@ -22,3 +22,4 @@ to the individual README's for specific details.
 * [005 port simulation to Julia](005/README.md)
 * [006 Phaser game framework Hello World](006/README.md)
 * [007 Digital Audio Modulation](007/README.md)
+* [008 Playing with Pipes](008/README.md)
