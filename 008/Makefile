@@ -2,9 +2,9 @@ CC=gcc
 CFLAGS=-Wall -g -O2
 LDFLAGS+=-lm -lc -lliquid
 
-example_programs :=                   \
-	passthrough                   \
-	fir-filter/moving-average     \
+example_programs :=                              \
+	passthrough                              \
+	fir-filter/moving-average-from-files     \
 
 # TARGETS
 all: $(example_programs)
