@@ -33,33 +33,11 @@ typedef struct {
 
 void print_usage(char *progname)
 {
-    printf("usage: %s <data_type>\n\n", progname);
+    printf("usage: %s <ncoeff> <data_type>\n\n", progname);
     printf("   <data_type> is one of the following:  \n"
 		   "       int8_t  int16_t  float\n\n"
 		   "   int16_t is the default value. \n\n");
 }
-
-int read_sample(data_sample *samp)
-{
-	int n=0;
-
-	for (n=0; n < samp->nbytes; n++)
-		if ((samp->buf_char[n] = getchar()) == EOF)
-			return 1;
-	
-	return 0;
-}
-
-int write_sample(data_sample *samp)
-{
-	int n=0;
-
-	for (n=0; n < samp->nbytes; n++)
-		putchar(samp->buf_char[n]);
-	
-	return 0;
-}
-
 
 //### get_block_length - in libece486
 int get_block_length(void)
@@ -144,7 +122,7 @@ main(int argc, char *argv[])
 	if (ncoeff > 1024 || ncoeff < 2){ printf("%d is a Bad coefficient number.\n",ncoeff); return 1;}
 	
 	char *data_type;
-	strncpy(data_type,argv[2],10);
+	data_type = argv[2];
 
 	size_t nbytes;
     if (strcmp(data_type,"int8_t")==0)
@@ -154,11 +132,11 @@ main(int argc, char *argv[])
 	else if (strcmp(data_type,"float")==0)
 		nbytes = sizeof(float);
 	else {
-			printf("ERROR: %s is the <data_type> you entered.\n", data_type);
-			printf("Not an accepted data_type\n"); 
+			printf("ERROR: \"%s\" is the data_type you entered.\n", data_type);
+			printf("It is not an accepted data_type.\n"); 
 			return 1;}
 	if (nbytes != 2)
-	{ printf("Only 16 bit audio for now!"); return 1;}
+	{ printf("Only 16 bit audio for now!\n"); return 1;}
 
 	// allocate arrays
 	nsamp = get_block_length();
@@ -174,18 +152,27 @@ main(int argc, char *argv[])
 
 	// Setup sample for storing data
 	data_sample sample = {nbytes, {"????"}};
-	data_sample *sptr = &sample;
-	
+	//printf("%d bytes\n",(int)sample.nbytes);
 	// Process stream
-	while(!(read_sample(sptr)))
-		int_to_float((int16_t*)(sptr->buf_16t),input_f,1);
-		filter_block(input_f, output_f, 1, coeff, ncoeff);
+	while(1)
+	{
+		int n=0;
+		for (n=0; n<nbytes; n++)
+			sample.buf_char[n]=getchar();
+		
+		if (feof(stdin))
+			return 1;
 
+		int_to_float((int16_t*)(sample.buf_16t),input_f,1);
+		filter_block(input_f, output_f, 1, coeff, ncoeff);
+		
 		// Write out data
 		float_to_int(output_f, outbuf, 1);
 		*sample.buf_16t = *outbuf;
-		write_sample(sptr);
-
+		int i=0;
+		for (i=0; i<nbytes; i++)
+			putchar((char)sample.buf_char[i]);
+	}
 	return 0;
 }
 
