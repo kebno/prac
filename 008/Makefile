@@ -3,7 +3,7 @@ CFLAGS=-Wall -g -O2
 LDFLAGS+=-lm -lc -lliquid
 
 example_programs :=                              \
-	passthrough                              \
+	moving-average                           \
 	fir-filter/moving-average-from-files     \
 	simple-passthrough                       \
 
