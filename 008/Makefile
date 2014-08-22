@@ -6,6 +6,7 @@ example_programs :=                              \
 	moving-average                           \
 	fir-filter/moving-average-from-files     \
 	simple-passthrough                       \
+	tests/test-struct-union
 
 # TARGETS
 all: $(example_programs)
