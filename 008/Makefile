@@ -5,6 +5,7 @@ LDFLAGS+=-lm -lc -lliquid
 example_programs :=                              \
 	passthrough                              \
 	fir-filter/moving-average-from-files     \
+	simple-passthrough                       \
 
 # TARGETS
 all: $(example_programs)
