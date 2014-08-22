@@ -1,9 +1,9 @@
-/* PASSTHROUGH.C
+/* moving-average.c
  *  Aug 2014, John Boyle
  *
- *  Reads from stdin and writes it to stdout.
+ *  Reads from stdin, performs moving average filter, and writes it to stdout.
  *
- *  Based on tutorial at http://mishotips.blogspot.com/2013/05/redirecting-standard-input-and-output.html
+ *  Pipe int16_t audio to it and pipe stdout to an audio player.
  */
 
 #include <stdio.h>

@@ -1,4 +1,4 @@
-/* PASTHROUGH.C
+/*  simple-passthrough.c 
  *  Aug 2014, John Boyle
  *
  *  Reads from stdin and writes it to stdout.

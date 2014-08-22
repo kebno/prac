@@ -1,13 +1,13 @@
 /*
- * moving-average-read-files.c
+ * moving-average-from-files.c
  * John Boyle, ECE506 DSP Applications, Winter 2014, Portland State Univ.
  *
  * An implementation of a FIR filter in C.
  * Usage:
- *   > moving-average-read-files <num. coeff> <input.raw> <output.raw>
+ *   > moving-average-from-files <num. coeff> <input.raw> <output.raw>
  *
  * Example invocation:
- *   > moving-average-read-files 21 sound.pcm sound-filtered.pcm
+ *   > moving-average-from-files 21 sound.pcm sound-filtered.pcm
  */
 
 #include <stdio.h>
