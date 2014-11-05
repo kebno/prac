@@ -23,3 +23,4 @@ to the individual README's for specific details.
 * [006 Phaser game framework Hello World](006/README.md)
 * [007 Digital Audio Modulation](007/README.md)
 * [008 Playing with Pipes](008/README.md)
+* [009 Racket](009/README.md)
