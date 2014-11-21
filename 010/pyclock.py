@@ -16,3 +16,27 @@ class App():
         self.root.after(1000, self.update_clock)
 
 app=App()
+
+
+# get data
+# curl --output data.txt --data "FFX=1&xxy=2014&type=0&st=CA&place=San+Diego&ZZZ=END" http://aa.usno.navy.mil/cgi-bin/aa_rstablew.pl 
+# strip header and footer from USNO table file
+#sed '/</d' data.txt | sed '10,40!d' > table.txt
+
+
+# read rows 
+#   rows = [[x for x in line.split()[:-1]] for line in file]
+# convert to lists from the columns
+#   cols = [list(col) for col in zip(*rows)]
+# Put them all together
+#  sunrise, sunset = [], []
+#  for x in range(1,13):
+#      sunrise.append(cols[(x*2-1)])
+#      sunset.append(cols[(x*2)])a
+# Create a dict of the data, with JDOY as key
+# Now write them out into a new file
+#  for x in range(1, 365+1):
+#      data_dict = {x: (sunrise[x], sunset[x]) for x in range(1, 365+1)}
+
+
+
