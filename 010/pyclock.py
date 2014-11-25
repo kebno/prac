@@ -2,22 +2,66 @@
 import tkinter as tk
 import time
 
-class App():
-    def __init__(self):
-        self.root = tk.Tk()
+class App(tk.Tk):
+    def __init__(self, parent):
+        tk.Tk.__init__(self, parent)
+        self.parent = parent
+        self.initialize()
+
+    def initialize(self):
+        self.grid()
+
+        # The Time Text
+        self.time_text = tk.StringVar() # allows triggering of watcher functions
+        self.time_text.set("+3:58")
+
+        # The Data Update Text
+        self.data_update_text = tk.StringVar()
+        self.data_update_text.set("Last Updated Long Ago")
+
+        # First Row
+        self.time_label = tk.Label(self, textvariable=self.time_text,
+                font=("Helvetica", 100))
+        self.time_label.grid(column=0,row=1,columnspan=2,sticky="N")
+
+        # Second Row
+        self.msg_label = tk.Label(self, textvariable=self.data_update_text, font=("Helvetica", 10))
+        self.msg_label.grid(column=0,row=2,sticky='EW')
+        
+        self.update_button = tk.Button(self, text=u'Update Time Data', 
+                font=("Helvetica", 10), command=self.on_button_click)
+        self.update_button.grid(column=1, row=2, sticky='N')
+
+        # Manage window resizing
+        self.grid_columnconfigure(0,weight=1) # resize column 0, weight of 1
+        self.resizable(False,False) # Prevent Resizing
+
+
+    def on_button_click(self):
+        self.data_update_text.set("Updated at " + time.strftime("%H:%M:%S"))
+
+    def render(self):
+        self.label.configure(text=new_text)
+        self.root.after(1000, self.clock_tick_handler)
+
+
+if __name__  == "__main__":
+    app = App(None)
+    app.title('Natural Clock')
+    app.mainloop()
+
+
+'''
         self.label = tk.Label(text="", font=("Helvetica", 40))
         self.label.pack()
-        self.update_clock()
-        self.root.mainloop()
 
-    def update_clock(self):
+    def update_clock(self, text):
         now = time.strftime("%H:%M:%S")
         self.label.configure(text=now)
         self.root.after(1000, self.update_clock)
+'''
 
-app=App()
-
-
+####  BACKGROUND INFO FOR LATER? ####
 # get data
 # curl --output data.txt --data "FFX=1&xxy=2014&type=0&st=CA&place=San+Diego&ZZZ=END" http://aa.usno.navy.mil/cgi-bin/aa_rstablew.pl 
 # strip header and footer from USNO table file
