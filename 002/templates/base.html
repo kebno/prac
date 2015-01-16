@@ -4,18 +4,26 @@
 <meta charset="utf-8"/>
 <title>{% block title %}Home{% endblock title %}</title>
 <meta name="author" content="John K. Boyle"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link type="text/css" rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet" href="/static/screen.css">
 <link type="text/css" rel="stylesheet" href="/static/pygments.css">
+<style>
+a, a:visited, a:hover { text-decoration: none; }
+#sitename { text-align: right; }
+</style>
 </head>
 
 <body>
-<div class="container">
-	<h1><a href="/">John K. Boyle</a></h1>
+<div class="site">
+	<div id=sitename class="title">
+		<a href="/">John K. Boyle</a>
+	</div>
+	
 	{% block content %}
 	This is the default body text.
 	{% endblock %}		
-</div>
+
 	<div class="footer">
 		<p>&copy; Copyright 2014 John K. Boyle</p>
 		<p>Contact me via an email</p>
