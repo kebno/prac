@@ -17,7 +17,6 @@ SERVER_PORT = 8000
 app = Flask(__name__)
 flatpages = FlatPages(app)
 freezer = Freezer(app)
-md = Markdown(app, extensions = ['codehilite'] )
 app.config.from_object(__name__)
 
 @app.route("/")
