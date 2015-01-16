@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock title %}
 {% block content %}
-# John K. Boyle
+
+<h1>John K. Boyle</h1>
 Hi, I'm a person. 
 
-----------
+<hr>
 
 <h2>Projects</h2>
 
@@ -13,10 +14,25 @@ Hi, I'm a person.
 <ul>
 	{% for post in posts %}
 	<li>
-	<a href="{{ url_for("post", path=post.path.replace('posts/', '')) }}">{{ post.title }}</a>
+	<a href="{{ url_for('post', name=post.path.replace('posts/', '')) }}">
+        {{ post.title }}     <small>{{ post.date }}</small>
+    	</a>	
 	</li>
 	{% else %}
 	<li>No posts.</li>
+	{% endfor %}
+</ul>
+
+<h2>List of Pages</h2>
+<ul>
+	{% for page in pages %}
+	<li>
+	<a href="{{ url_for('page',name=page.path.replace('pages/', '')) }}">
+	{{ page.title }} <small>{{ page.date }}</small>
+	</a>
+	</li>
+	{% else %}
+	<li>No pages.</li>
 	{% endfor %}
 </ul>
 {% endblock content %}

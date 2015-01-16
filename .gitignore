@@ -1,32 +1,20 @@
 *.swp
+*~
 
 002/static/bootstrap/
 002/static/bootstrap*.zip
+002/build/
 
 006/phaser
 006/hellophaser
 006/phaser-examples
+006/phaser.min.js
+006/tutorials
 
 # Python things
 *.py[cod]
 *.so
-*.egg
-*.egg-info
-dist
-build
-eggs
-parts
-bin
-var
-sdist
-develop-eggs
-.installed.cfg
-lib
-lib64
-__pycache__
 
 # Installer logs
 pip-log.txt
 
-006/phaser.min.js
-006/tutorials

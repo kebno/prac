@@ -2,16 +2,19 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>{% block title %}Home{% endblock title %} | {{ config.SITENAME }}</title>
+<title>{% block title %}Home{% endblock title %}</title>
 <meta name="author" content="John K. Boyle"/>
 
 <link type="text/css" rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet" href="/static/pygments.css">
 </head>
 
 <body>
 <div class="container">
 	<h1><a href="/">John K. Boyle</a></h1>
-	{{ content }}		
+	{% block content %}
+	This is the default body text.
+	{% endblock %}		
 </div>
 	<div class="footer">
 		<p>&copy; Copyright 2014 John K. Boyle</p>
