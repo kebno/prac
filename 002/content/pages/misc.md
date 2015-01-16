@@ -1,5 +1,6 @@
 title: Miscellaneous
 date: Jan 2 2014
+
 ## Markdown Syntax Quirks
 
 1. Code blocks within a list must be indented by 8 spaces.
