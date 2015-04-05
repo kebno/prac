@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Time Lapse Progress Dashboard, by John Boyle</title>
+    <style>
+    .indicator {
+        font-size: 3em;
+        fill: black;
+        font-family: monospace;
+        text-anchor: end;
+    }
+    .label {
+        font-size: 0.25em;
+        font-weight: normal;
+        font-family: monospace;
+    }
+    </style>
+</head>
+<body>
+
+<svg height="300" width="500">
+  <!--
+    Title
+    -->
+  <text x="0.2em" y="0.8em" font-size="2em" style="fill:black;">
+    Time Lapse Progress
+  </text>
+  <line x1="0.5em" y1="3.5em" x2="100%" y2="3.5em" style="stroke:rgb(127,127,0);stroke-width:4" />
+   <!-- 
+    Number Display 
+    -->
+    <text x="4.5em" y="2.5em" class="indicator"> 
+        4472<tspan class="label">IMAGES</tspan>
+    </text>
+    <text x="8.5em" y="2.5em" class="indicator"> 
+        5888<tspan class="label">MB</tspan></text>
+    <text x="12em" y="2.5em" class="indicator"> 
+        74%<tspan class="label" dy="-1em"> disk</tspan><tspan class="label" dy="1em" dx="-2.5em">full</tspan>
+    </text>
+
+    <line x1="0.5em" y1="7em" x2="100%" y2="7em" style="stroke:rgb(0,127,127);stroke-width:4" />
+
+  Sorry, your browser does not support inline SVG.
+</svg>
+
+</body>
+</html>

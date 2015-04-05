@@ -25,3 +25,5 @@ to the individual README's for specific details.
 * [008 Playing with Pipes](008/README.md)
 * [009 Racket](009/README.md)
 * [010 Natural Clock](010/README.md)
+* [011 GSL in C++](011/README.md)
+* [012 Time Lapse Dashboard in SVG](012/README.md)
