@@ -1,1 +1,1 @@
-# GSL in C++ testing
+# GSL in C++, and Wave Motion in MATLAB 
