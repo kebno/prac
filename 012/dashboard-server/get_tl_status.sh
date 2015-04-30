@@ -16,7 +16,7 @@ Nimage=`ls -1 $IMAGE_DIR/*.jpg | wc -l`
 
 # Show disk usage of a directory, in Megabytes
 # match the number of megabytes in output
-size_image_dir=`du -h -BM $IMAGE_DIR | grep -o '^[0-9]*'`
+mb_used=`du -h -BM $IMAGE_DIR | grep -o '^[0-9]*'`
 
 # report file system disk space usage
 # assume main disk is first result of df, get the percent usage
@@ -34,8 +34,8 @@ latest_image=`ls -1t $IMAGE_DIR/*.jpg | head -n 1`
 latest_image_timestamp=`ls -t --full-time $IMAGE_DIR/*.jpg | head -n 2 | awk 'NR>1 {print $6,$7}' | cut -c -19`
 
 # Create smaller version for dashboard page
-convert $latest_image -resize 640x480 -background black -fill white \
-         label:"$latest_image_timestamp" -gravity west -append latest-image.jpg
+convert $latest_image -resize 640x480 -background white \
+         label:"$latest_image_timestamp" +swap -gravity west -append latest-image.jpg
 
 # Output as JSON string #
-printf '{"Nimage":"%s","size_image_dir":"%s","percent_storage":"%s"}\n' "$Nimage" "$size_image_dir" "$percent_storage"
+printf '{"Nimage":"%s","mb_used":"%s","percent_storage":"%s"}\n' "$Nimage" "$mb_used" "$percent_storage"

@@ -1,18 +1,22 @@
 #!/bin/python
 
-from flask import Flask, render_template
-import random, subprocess
+from flask import Flask, render_template, jsonify, send_file
+import subprocess, os, json
 
 app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-	return render_template('dashboard.html', N_images=random.randint(1,9999),mb_used=random.randint(1,9999),disk_percent_used=random.randint(0,99))
+	return render_template('dashboard.html')
 
-@app.route('/date/')
+@app.route('/status/')
 def get_time():
-    p = subprocess.Popen('date', shell=True, stdout=subprocess.PIPE,executable='/bin/bash')
-    return p.communicate()[0]
+    p = subprocess.Popen(os.getcwd() + '/get_tl_status.sh', cwd=os.getcwd(), shell=True, stdout=subprocess.PIPE,executable='/bin/bash')
+    return jsonify(json.loads(p.communicate()[0]))
+
+@app.route('/latest-image')
+def latest_image():
+    return send_file('latest-image.jpg',cache_timeout=1)
 
 if __name__ == '__main__':
 	app.run(debug=True,host='0.0.0.0')
