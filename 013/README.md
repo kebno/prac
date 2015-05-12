@@ -10,3 +10,11 @@
       - Plot of CSDM angle, magnitude
       - Plot beamformer output
       - Plot directivity of array (spherically isotropic noise)
+<script>
+var timeBudget = {
+  "totalTime": 30,
+  "install_and_setup": 1,
+  "AeroTwist tutorial": 1,
+  "Modify MathBox Sphere Example", 1,
+}
+</script>
