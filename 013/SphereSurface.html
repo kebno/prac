@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MathBox - Empty Example.</title>
+
+  <!--
+    This example is good for starting from.
+  -->
+
+  <script type="text/javascript" charset="utf-8" src="../vendor/domready.js"></script>
+  <script type="text/javascript" charset="utf-8" src="../build/MathBox-bundle.js"></script>
+
+  <script type="text/javascript">
+    DomReady.ready(function () {
+      if (location.href.match(/^file:/)) {
+        document.getElementById('info').style.opacity = 1;
+        document.getElementById('info').innerHTML = "Sorry. This example does not work when accessed using file://. Please use an http:// host and try again.";
+      }
+    });
+  </script>
+
+  <script type="text/javascript">
+
+  function mathboxSetup() {
+    mathbox
+      .viewport({
+        type: 'sphere',
+        range: [[-π, π], [-π/2, π/2], [-1, 1]],
+      })
+      .camera({
+        orbit: 5,
+      })
+    .surface({
+      shaded: true,
+      domain: [[-π, π], [-π/2, π/2], [-1, 1]],
+      n: [60, 60, 60],
+      expression: surfaceFunc,
+    });
+   mathbox.world().tRenderer().setClearColorHex(0x333333, 1);
+
+    function surfaceFunc(phi,theta,r) {
+    var r = Math.pow(Math.sin(2*theta)*Math.cos(phi),2);
+     return [phi,theta,r]
+    }
+
+      // Animate viewport between polar and cartesian
+      mathbox.world().loop().hookPreRender(function () {
+        var t = +new Date() * .0003;
+        mathbox.set('viewport', { sphere: Math.sin(t) * .5 + .5 });
+        mathbox.set('camera', { phi: t });
+      });
+  }
+
+  </script>
+
+  <script type="text/javascript">
+  /**
+   * Bootstrap
+   */
+  DomReady.ready(function() {
+    ThreeBox.preload([
+      '../shaders/snippets.glsl.html',
+    ], function () {
+
+      // MathBox boilerplate
+      var mathbox = window.mathbox = mathBox({
+        cameraControls: true,
+        cursor:         true,
+        controlClass:   ThreeBox.OrbitControls,
+        elementResize:  true,
+        fullscreen:     true,
+        screenshot:     true,
+        stats:          false,
+        scale:          1,
+      }).start();
+
+      window.mathboxSetup(mathbox);
+
+    });
+  });
+  </script>
+
+  <link href="base.css" rel="stylesheet" type="text/css" media="screen">
+
+</head>
+<body>
+  <div id="info"></div>
+</body>
+</html>
