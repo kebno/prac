@@ -28,3 +28,4 @@ to the individual README's for specific details.
 * [011 GSL in C++, and Wave Motion in MATLAB](011/README.md)
 * [012 Time Lapse Dashboard in SVG](012/README.md)
 * [013 Array Processing, Visualized](013/README.md)
+* [014 Templates for Latex Documents](014/README.md)
