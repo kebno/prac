@@ -1,3 +1,5 @@
+# code from user “queueoverflow” at https://stackoverflow.com/questions/14878729
+
 import jinja2
 import math
 
