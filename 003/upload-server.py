@@ -8,12 +8,13 @@ ALLOWED_EXTENSIONS = set(['txt', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 # one megabyte
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 5 # a few megabyte
 
 upload_page = '''
     <!doctype html>
     <title>Upload new File</title>
     <h1>Upload new File</h1>
+    <h3>Max size is a few megabytes.</h3>
     <form action="" method=post enctype=multipart/form-data>
       <p><input type=file name=file>
          <input type=submit value=Upload>
@@ -32,7 +33,7 @@ def upload_file():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             if SILENT:
-                return 'Success'
+                return 'Success\n'
             else:
                 return upload_page + '''
                                     <hr>
