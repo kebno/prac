@@ -3,7 +3,7 @@ module simpleDBSS
 function computesimpledbss(f,zs; v=5, rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 # simpleDBSS
 # 2014, John Boyle - NEAR-Lab, Portland State University
-# May 2014, John Boyle (Julia Implementation) 
+# May 2014, John Boyle (Julia Implementation)
 #
 # Demonstration of the depth transform, or depth-based signal separation
 #    INPUTS  f 	     source frequency
@@ -14,7 +14,7 @@ function computesimpledbss(f,zs; v=5, rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 #            sim_dur duration of simulation (minutes)
 #            doppler toggle simple doppler calculation (as if you tracked
 #                    target signal in frequency, but computed depth
-#                    transform at original source frequency) 
+#                    transform at original source frequency)
 #
 #    OUTPUT  VTR     VTR PlotData object
 #            TRACE   target trace signal PlotData object
@@ -56,12 +56,12 @@ function computesimpledbss(f,zs; v=5, rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 	## Target track
 	surf_range = sqrt(rcpa^2 .+ ((t.-tcpa*60) * v).^2) # surface range to source from VLA
 	target_track = zBar./sqrt(zBar^2.+surf_range.^2) # sin(theta) to surface location of target
-	dtarget_track = diff(target_track) 
+	dtarget_track = diff(target_track)
 	dtarget_track = [dtarget_track[1], dtarget_track].'
 
 	# relative velocity between array and source
 	v_rel = v^2 * (t.-tcpa*60) ./ sqrt(surf_range.^2 .+ zBar^2)
-	
+
 	## Doppler calculation
 	if doppler
 		f_dop = (1 .+ v_rel/c) .* f
@@ -72,7 +72,7 @@ function computesimpledbss(f,zs; v=5, rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 	## Pressure Field
 	slantrange(r,z) = sqrt(r.^2 + z.^2)
 	Rimage = broadcast(slantrange,surf_range,arrayZ.+zs)     # image source
-	Rsource = broadcast(slantrange,surf_range,arrayZ.-zs)    # real source 
+	Rsource = broadcast(slantrange,surf_range,arrayZ.-zs)    # real source
 
 	x = (10^(SL/20)                             # field at phones
 		* (exp(im*2*pi*(f_dop/c).*Rsource) ./ Rsource
@@ -86,7 +86,7 @@ function computesimpledbss(f,zs; v=5, rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 	w = beamweights(st)
 
 	vtr_data = w.' * x.'
-	
+
 	# Create VTR PlotData object
 	vtr = PlotData(vtr_data,t,st,"linear")
 
@@ -96,12 +96,12 @@ function computesimpledbss(f,zs; v=5, rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 	#   at each snapshot. Thus we sum along the first dimension (columns)
 	# P is the exact trace signal
 	w = beamweights(target_track)
-	P = w .* x.'  
+	P = w .* x.'
 	P = abs(sum(P,1)).^2
-	
+
 	# Create TRACE PlotData object
-	trace = PlotData(P,target_track,t,"linear")
-	
+	trace = PlotData(squeeze(P,1),target_track,t,"linear")
+
 	# Analytic beamformer output expression
 	P_an = N*2*(10^(SL/20))^2/zBar^2*target_track.^2 .* (1.-cos(2*k*zs*target_track))
 
@@ -109,7 +109,7 @@ function computesimpledbss(f,zs; v=5, rcpa=2000,tcpa=45,sim_dur=90,doppler=true)
 	zmin = -200
 	zmax = 200
 	z = linspace(zmin,zmax,length(target_track))
-        M = depthtransform_dft(P.*abs(dtarget_track),k,z.',target_track.')
+  M = depthtransform_dft(P.*abs(dtarget_track),k,z.',target_track.')
 
 	# Create DBSS object
 	dbss = PlotData(M,z,z,"linear")
@@ -137,7 +137,7 @@ function depthtransform_dft(P,k,z,track_st)
         for ii = 1:length(z)
                 M[ii] = sum(P .* exp(-im*2*k*z[ii] .* track_st))
 	end
-	return M
+	return squeeze(M,1)
 end
 
 function depthtransform_idft(M,k,z,track_st)
@@ -153,13 +153,29 @@ function depthtransform_idft(M,k,z,track_st)
 	N = length(track_st)
 
 	for ii = 1:N
-		P(ii) = 1/(2*pi*N)*sum(M .* exp(1i*2*k*z * track_st(ii)))
+		P[ii] = 1/(2*pi*N)*sum(M .* exp(1i*2*k*z * track_st(ii)))
 	end
+	return squeeze(P,1)
 end
 
-using Winston
+###########################################################################
+using PyPlot
 
-vtr,trace,dbss = @time(computesimpledbss(150,50;tcpa=30,sim_dur=60))
-plot(dbss.xaxis,10*log10(abs(dbss.data)))
+vtr,trace,dbss = @time(computesimpledbss(150,75;tcpa=30,sim_dur=60))
+
+line_data = 10*log10(abs(dbss.data))
+figure()
+plot(dbss.xaxis,line_data-maximum(line_data))
+title("Depth Transform Output")
+xlabel("Depth (m)")
+ylabel("Normalized dB")
+
+line_data = 10*log10(abs(trace.data))
+figure()
+plot(trace.xaxis,line_data-maximum(line_data))
+title("Target Trace Signal")
+xlabel("Track Distance (km)")
+ylabel("Normalized dB")
+ylim(-20,0)
 
 end
