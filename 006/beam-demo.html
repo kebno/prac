@@ -1,6 +1,6 @@
-<!doctype html> 
-<html lang="en"> 
-<head> 
+<!doctype html>
+<html lang="en">
+<head>
 	<meta charset="UTF-8" />
 	<title>Beam Demo, by John Boyle</title>
 	<script type="text/javascript" src="phaser.min.js"></script>
@@ -11,7 +11,8 @@
     </style>
 </head>
 <body>
-
+Put together while sitting in Common Grounds Coffee, Portland OR, May 2014. With
+motivational assistance from wicker.
 <script type="text/javascript">
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
@@ -20,24 +21,24 @@ function preload() {
 
 	game.load.image('phone', 'assets/phone.png');
 	game.load.image('arrow', 'assets/grey_arrow.png');
-	game.stage.setBackgroundColor('#0fffff');
+	game.stage.setBackgroundColor('#08a7fa');
 
 }
 
 var array_center;
 var arrow;
-var arrow2; 
+var arrow2;
 var lookarrow;
 var signalbox;
 
 function create() {
-	
+
 	//  Several phones
 	for (var i = 0; i < 6; i++)
 	{
 		var phone = game.add.sprite(300, 240 + i*30, 'phone');
 	}
-	
+
 	array_center = new Phaser.Circle(300, 300, 0);
 	//arrow2 = game.add.sprite(300, 240, 'arrow');
 
