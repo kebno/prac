@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-Wall -g -O2
-LDFLAGS+=-lm -lc -lliquid
+LDFLAGS+=-lm -lc
 
 example_programs :=                              \
 	moving-average                           \
@@ -11,7 +11,7 @@ example_programs :=                              \
 # TARGETS
 all: $(example_programs)
 
-# This means that each example_program depends on a file with 
+# This means that each example_program depends on a file with
 # the same name but with ".c" appended
 $(example_programs): % : %.c
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
