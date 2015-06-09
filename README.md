@@ -2,6 +2,16 @@
 
 practice programming often
 
+    And it is because I know the difficulty, it is because I 
+    know the almost disastrous effect of failure in such an
+    enterprise, that I earnestly advise a very humble beginning. 
+    You must safeguard your self-respect. Self-respect is at the 
+    root of all purposefulness, and a failure in an enterprise 
+    deliberately planned deals a desperate wound at one's
+    self-respect.  Hence I iterate and reiterate: Start quietly,
+    unostentatiously. --- Arnold Bennett
+
+
 ### Understanding the code
 
 Unless stated, defaults are always used.  You should be able to understand
