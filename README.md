@@ -29,3 +29,4 @@ to the individual README's for specific details.
 * [012 Time Lapse Dashboard in SVG](012/README.md)
 * [013 Array Processing, Visualized](013/README.md)
 * [014 Templates for Latex Documents](014/README.md)
+* [015 Control Processing Sketch with MIDI Controller](015)
