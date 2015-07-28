@@ -1,7 +1,5 @@
 // rtsine.cpp STK tutorial program
 
-#include "stk/RtAudio.h"
-#include "stk/Mutex.h"
 #include "stk/SineWave.h"
 #include "stk/RtWvOut.h"
 #include <cstdlib>
@@ -54,4 +52,3 @@ int main()
 
   return 0;
 }
-
